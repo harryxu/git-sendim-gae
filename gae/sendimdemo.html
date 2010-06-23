@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+    <title></title>
+    
+  </head>
+  <body>
+
+    <form id="imform" action="/sendim" method="post">
+      <p>
+        <label for="msgInput">消息</label><br />
+        <textarea id="msgInput" name="msg" rows="8" cols="40" autofocus></textarea>
+      </p>
+
+      <p>
+        <label for="jidInput">jid/email</label><br/>
+        <input id="jidInput" type="email" name="jid" value="" >
+      </p>
+
+      <p>
+        <button id="btnSubmit" type="submit">发送</button>
+      </p>
+    </form>
+
+    <div id="sent" style="display:none;">发完了</div>
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+
+    <script type="text/javascript">
+      $(function(){
+          var actUrl = $('#imform').attr('action');
+          $('#btnSubmit').click(function(){
+            var jid = $('#jidInput').val();
+            var msg = $('#msgInput').val();
+
+            $.post(actUrl, {
+                'jid': jid,
+                'msg': msg
+              }, 
+
+              function(){
+                $('#sent').show('slow', function(){$(this).hide('slow')});
+              }
+            );
+
+            return false;
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -7,15 +7,14 @@ from google.appengine.ext.webapp import util
 
 
 class MainHandler(webapp.RequestHandler):
-    def get(self):
+    def post(self):
         user_address = self.request.get('jid')
-
-        msg = "test message"
+        user_msg = self.request.get('msg')
 
         if not xmpp.get_presence(user_address):
             xmpp.send_invite(user_address)
         else:
-            status_code = xmpp.send_message(user_address, msg)
+            status_code = xmpp.send_message(user_address, user_msg)
             self.response.out.write(status_code)
 
 class InviteHandler(webapp.RequestHandler):
@@ -26,7 +25,11 @@ class InviteHandler(webapp.RequestHandler):
     def post(self):
         email = self.request.get('email')
         xmpp.send_invite(email)
-        self.response.out.write('Invation has been sent to %s.' % email)
+
+        path = os.path.join(os.path.dirname(__file__), 'tpl/sendim/invite.html')
+        self.response.out.write(template.render(path, {
+            'msg': 'Invation has been sent to %s.' % email
+        }))
 
 def main():
     application = webapp.WSGIApplication([

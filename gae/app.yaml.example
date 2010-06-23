@@ -5,6 +5,10 @@ api_version: 1
 
 handlers:
 
+- url: /sendim/demo
+  static_files: sendimdemo.html
+  upload: sendimdemo.html
+
 - url: /sendim
   script: sendim.py
 
