@@ -161,9 +161,9 @@ generate_email()
 
 generate_email_header() 
 {
-    cat <<-EOF
-    $projectdesc
-    EOF
+	cat <<-EOF
+	$projectdesc
+	EOF
 }
 
 
@@ -333,7 +333,7 @@ generate_update_branch_email()
 
 	echo ""
 	if [ -z "$rewind_only" ]; then
-		echo "New revisions "
+		echo "New revisions"
 
 		echo ""
 		echo $LOGBEGIN
