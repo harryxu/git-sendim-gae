@@ -274,68 +274,8 @@ generate_update_branch_email()
 		fast_forward=1
 	fi
 
-	# List all the revisions from baserev to newrev in a kind of
-	# "table-of-contents"; note this list can include revisions that
-	# have already had notification emails and is present to show the
-	# full detail of the change from rolling back the old revision to
-	# the base revision and then forward to the new revision
-	for rev in $(git rev-list $oldrev..$newrev)
-	do
-		revtype=$(git cat-file -t "$rev")
-		echo "       via  $rev ($revtype)"
-	done
-
-	if [ "$fast_forward" ]; then
-		echo "      from  $oldrev ($oldrev_type)"
-	else
-		#  1. Existing revisions were removed.  In this case newrev
-		#     is a subset of oldrev - this is the reverse of a
-		#     fast-forward, a rewind
-		#  2. New revisions were added on top of an old revision,
-		#     this is a rewind and addition.
-
-		# (1) certainly happened, (2) possibly.  When (2) hasn't
-		# happened, we set a flag to indicate that no log printout
-		# is required.
-
-		echo ""
-
-		# Find the common ancestor of the old and new revisions and
-		# compare it with newrev
-		baserev=$(git merge-base $oldrev $newrev)
-		rewind_only=""
-		if [ "$baserev" = "$newrev" ]; then
-			echo "This update discarded existing revisions and left the branch pointing at"
-			echo "a previous point in the repository history."
-			echo ""
-			echo " * -- * -- N ($newrev)"
-			echo "            \\"
-			echo "             O -- O -- O ($oldrev)"
-			echo ""
-			echo "The removed revisions are not necessarilly gone - if another reference"
-			echo "still refers to them they will stay in the repository."
-			rewind_only=1
-		else
-			echo "This update added new revisions after undoing existing revisions.  That is"
-			echo "to say, the old revision is not a strict subset of the new revision.  This"
-			echo "situation occurs when you --force push a change and generate a repository"
-			echo "containing something like this:"
-			echo ""
-			echo " * -- * -- B -- O -- O -- O ($oldrev)"
-			echo "            \\"
-			echo "             N -- N -- N ($newrev)"
-			echo ""
-			echo "When this happens we assume that you've already had alert emails for all"
-			echo "of the O revisions, and so we here report only the revisions in the N"
-			echo "branch from the common base, B."
-		fi
-	fi
-
-	echo ""
 	if [ -z "$rewind_only" ]; then
-		echo "New revisions"
-
-		echo ""
+		echo "New revision"
 		echo $LOGBEGIN
 		show_new_revisions
 
